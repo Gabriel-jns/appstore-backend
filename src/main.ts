@@ -8,7 +8,7 @@ async function bootstrap() {
   const config = new DocumentBuilder()
     .setTitle('API Appstore')
     .setDescription(
-      'Esta gestiona aplicaciones y permite a un usuario descargar aplicaciones',
+      'Esta app gestiona aplicaciones y permite a un usuario descargar aplicaciones',
     )
     .setVersion('3.0')
     .addTag('app-store-api')
