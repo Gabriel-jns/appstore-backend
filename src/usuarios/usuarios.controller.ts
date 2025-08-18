@@ -45,12 +45,13 @@ export class UsuarioController {
   removeUsuario(@Param('id') id: string) {
     return this.usuarioService.removeUsuario(Number(id));
   }
-  @Patch('aplicaciones/:idApp')
+  @Patch('aplicaciones/:idApp/:idUsuario')
   downLoadApp(
     @Param('idApp') idApp: string,
+    @Param('idUsuario') idUsuario: string,
 
-    @Body() usuario: Usuario,
+    //@Body() usuario: Usuario,
   ): Usuario {
-    return this.usuarioService.downLoadApp(Number(idApp), usuario);
+    return this.usuarioService.downLoadApp(Number(idApp), Number(idUsuario));
   }
 }
