@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
 import { UpdateUsuarioDto } from './dto/update-usuario.dto';
 import { Usuario } from 'src/entities/usuario.entity';
@@ -9,7 +13,15 @@ import { AplicacionService } from 'src/aplicacion/aplicacion.service';
 export class UsuarioService {
   constructor(private readonly aplicacionService: AplicacionService) {}
 
-  usuarios: Usuario[] = [];
+  usuarios: Usuario[] = [
+    new Usuario(
+      1,
+      'UsuarioPrueba',
+      'usuarioprueba@mail.com',
+      'usuario2025',
+      [],
+    ),
+  ];
 
   createUsuario(createUsuarioDto: CreateUsuarioDto): Usuario {
     const nuevoUsuario: Usuario = new Usuario(
@@ -71,18 +83,31 @@ export class UsuarioService {
   downLoadApp(
     idApp: number,
 
-    usuario: Usuario,
+    usuarioId: number,
   ): Usuario {
+    const usuarioExist = this.usuarios.find(
+      (user: Usuario) => user.id === usuarioId,
+    );
+    if (!usuarioExist) {
+      throw new NotFoundException('Usuario no encontrado');
+    }
     const aplicacionExistente = this.aplicacionService.aplicaciones.find(
       (app: Aplicacion) => app.id === idApp,
     );
     if (!aplicacionExistente) {
       throw new NotFoundException('Aplicacion no existe');
     }
-    if (aplicacionExistente) {
-      usuario.aplicacionesDescargadas.push(aplicacionExistente);
+    const aplicacionDescargada = usuarioExist.aplicacionesDescargadas.find(
+      (app: Aplicacion) => app.id === idApp,
+    );
+    if (aplicacionDescargada) {
+      throw new BadRequestException('Aplicacion ya descargada');
+    }
+    if (aplicacionExistente && usuarioExist && !aplicacionDescargada) {
+      usuarioExist.aplicacionesDescargadas.push(aplicacionExistente);
       aplicacionExistente.descargas = aplicacionExistente.descargas + 1;
     }
-    return usuario;
+
+    return usuarioExist;
   }
 }
